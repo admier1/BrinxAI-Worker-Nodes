@@ -2,7 +2,6 @@
 
 Worker Nodes are the operational units of the BrinxAI network, executing the tasks distributed by Central Nodes. They are crucial for the functionality of the network, handling various AI operations such as image and video generation, text transformation, audio processing, website creation, code generation, and more.
 
-Purpose of Worker Nodes
 Worker Nodes serve the following key purposes:
 
 Task Execution: They perform the actual computational tasks assigned by Central Nodes.
@@ -11,7 +10,8 @@ Resource Utilization: Utilize their hardware resources to process tasks efficien
 
 Feedback Loop: Provide performance feedback to Central Nodes to help optimize task distribution.
 
-How Worker Nodes Work
+How Worker Nodes Work? 
+
 Task Reception
 Task Assignment: Worker Nodes receive tasks from Central Nodes based on their current capacity and load.
 
@@ -99,7 +99,11 @@ Ensure port 5011 is open on your system for the Worker Node to function correctl
 Follow the above steps carefully for a successful installation and setup of your Worker Node on both Linux and Windows platforms.
 
 
-Stay Connected
--Website: https://brinxai.com
--Twitter: https://x.com/BrinxAi_Labs
--Discord: https://discord.com/invite/JVR2RTtQy8
+##Stay Connected
+
+-Website: 
+https://brinxai.com
+-Twitter: 
+https://x.com/BrinxAi_Labs
+-Discord: 
+https://discord.com/invite/JVR2RTtQy8
