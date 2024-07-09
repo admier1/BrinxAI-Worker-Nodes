@@ -101,11 +101,11 @@ Follow the above steps carefully for a successful installation and setup of your
 
 Stay Connected
 
--Website: 
+-Website:
 https://brinxai.com
 
--Twitter: 
+-Twitter:
 https://x.com/BrinxAi_Labs
 
--Discord: 
+-Discord:
 https://discord.com/invite/JVR2RTtQy8
