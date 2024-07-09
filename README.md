@@ -1,4 +1,4 @@
-# Worker Nodes Setup
+# BrinxAI Worker Nodes Setup
 
 ## System Requirements for Worker Nodes
 
