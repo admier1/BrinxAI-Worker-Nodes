@@ -99,11 +99,13 @@ Ensure port 5011 is open on your system for the Worker Node to function correctl
 Follow the above steps carefully for a successful installation and setup of your Worker Node on both Linux and Windows platforms.
 
 
-##Stay Connected
+Stay Connected
 
 -Website: 
 https://brinxai.com
+
 -Twitter: 
 https://x.com/BrinxAi_Labs
+
 -Discord: 
 https://discord.com/invite/JVR2RTtQy8
