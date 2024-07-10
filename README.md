@@ -60,6 +60,18 @@ Run the following commands in your Terminal:
 # Pull the latest image from Docker Hub
 docker pull admier/brinxai_nodes-worker:latest
 
+# Create docker-compose.yml file if it does not exist
+echo "version: '3.8'
+
+services:
+  worker:
+    image: admier/brinxai_nodes-worker:latest
+    ports:
+      - \"5011:5011\"
+    environment:
+      - SOME_ENV_VAR=some_value
+" > docker-compose.yml
+
 # Run docker-compose to start the service
 docker compose up -d
 ```
@@ -81,6 +93,18 @@ Run the following commands in your Command Prompt or Powershell:
 ```bash
 # Pull the latest image from Docker Hub
 docker pull admier/brinxai_nodes-worker:latest
+
+# Create docker-compose.yml file if it does not exist
+echo "version: '3.8'
+
+services:
+  worker:
+    image: admier/brinxai_nodes-worker:latest
+    ports:
+      - \"5011:5011\"
+    environment:
+      - SOME_ENV_VAR=some_value
+" > docker-compose.yml
 
 # Run docker-compose to start the service
 docker compose up -d
