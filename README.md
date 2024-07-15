@@ -49,13 +49,16 @@ For optimal performance and to maximize earnings, we recommend the following sys
 - **GPU**: NVIDIA RTX 2060 or higher, AMD Radeon RX 5600 XT or higher
 - **Port**: 5011 needs to be open
 
-## Installation on Linux
-
+Installation
 Installation on Linux
 Step 1: Install Docker
 To install Docker on your Linux system, please follow the instructions provided in the official Docker documentation by visiting Docker Engine Installation.
+
 Step 2: Download & Run the Worker Node
 Run the following commands in your terminal:
+
+bash
+Copy code
 # Download the install script
 curl -O https://raw.githubusercontent.com/admier1/BrinxAI-Worker-Nodes/master/install.sh
 
@@ -73,8 +76,12 @@ Enter your Node Name (Any) and IP address in the Worker Dashboard and click "Add
 Installation on Windows
 Step 1: Install Docker
 To install Docker on your Windows system, please follow the instructions provided in the official Docker documentation by visiting Docker Desktop Installation.
+
 Step 2: Download & Run the Worker Node
 Run the following commands in your Command Prompt or Powershell:
+
+powershell
+Copy code
 # Download the install script
 curl -O https://raw.githubusercontent.com/admier1/BrinxAI-Worker-Nodes/master/install.sh
 
@@ -92,41 +99,41 @@ Enter your Node Name (Any) and IP address in the Worker Dashboard and click "Add
 Important Notes
 Ensure port 5011 is open on your system for the Worker Node to function correctly.
 Follow the above steps carefully for a successful installation and setup of your Worker Node on both Linux and Windows platforms.
-
-
-
-
-
-
-Worker Nodes (Update Node)
-Introduction
-This guide will help you update your BrinxAI Worker Nodes from an older version to the latest version.
+Updating from an Older Version
 Update Instructions
 Step 1: Stop and Remove Existing Containers
 Before updating, you need to stop and remove your existing Docker containers. Run the following commands in your terminal or Command Prompt:
+
+bash
+Copy code
 # Stop the existing containers
-docker stop brinxai_nodes-worker-1
-​
+docker stop brinxai_nodes-worker-1 brinxai_nodes-text-ui-1 brinxai_nodes-rembg-1
+
 # Remove the existing containers
-docker rm brinxai_nodes-worker-1
+docker rm brinxai_nodes-worker-1 brinxai_nodes-text-ui-1 brinxai_nodes-rembg-1
 Step 2: Run the Installation Script
 Download and run the installation script to set up the updated services:
+
+bash
+Copy code
 # Download the install script
 curl -O https://raw.githubusercontent.com/admier1/BrinxAI-Worker-Nodes/master/install.sh
-​
+
 # Make the script executable
 chmod +x install.sh
-​
+
 # Run the installation script
 ./install.sh
 Step 3: Verify the Update
 Ensure that all services are running correctly by using the following command:
+bash
+Copy code
 docker ps
-Go to  and verify that your Worker Node is listed and active.
+Go to workers.brinxai.com and verify that your Worker Node is listed and active.
 Important Notes
 Make sure to backup any important data before performing the update.
 Ensure that port 5011 is open on your system for the Worker Node to function correctly.
-By following these updated instructions, you can successfully install or update your BrinxAI Worker Nodes on both Linux and Windows platforms.
+By following these instructions, you can easily install or update your BrinxAI Worker Nodes on both Linux and Windows platforms.
 
 
 Stay Connected
