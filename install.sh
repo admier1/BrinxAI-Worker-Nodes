@@ -2,8 +2,8 @@
 
 # Pull the latest images from Docker Hub
 docker pull admier/brinxai_nodes-rembg:latest
-docker pull admier/brinxai_nodes-rembg:latest
-docker pull admier/brinxai_nodes-rembg:latest
+docker pull admier/brinxai_nodes-text-ui:latest
+docker pull admier/brinxai_nodes-worker:latest
 
 # Create a Docker Compose file
 cat <<EOF > docker-compose.yml
@@ -42,5 +42,15 @@ networks:
     driver: bridge
 EOF
 
-# Start the Docker services
-docker-compose up -d
+# Check if docker-compose or docker compose is available and start the services
+if command -v docker-compose &> /dev/null
+then
+    docker-compose up -d
+elif command -v docker &> /dev/null && docker compose version &> /dev/null
+then
+    docker compose up -d
+else
+    echo "Neither docker-compose nor docker compose is available. Please install Docker Compose."
+    exit 1
+fi
+
