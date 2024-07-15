@@ -1,16 +1,25 @@
 #!/bin/bash
 
-# Pull the latest images from Docker Hub
-docker pull admier/brinxai_nodes-rembg:latest
-docker pull admier/brinxai_nodes-text-ui:latest
-docker pull admier/brinxai_nodes-worker:latest
+# Function to check if Docker image exists on Docker Hub
+check_image_exists() {
+    local image_name="$1"
+    if ! docker pull "$image_name" &> /dev/null; then
+        echo "Error: Docker image $image_name does not exist on Docker Hub."
+        exit 1
+    fi
+}
+
+# Check and pull the latest images from Docker Hub
+check_image_exists "admier/brinxai_nodes-rembg:latest"
+check_image_exists "admier/brinxai_nodes-text-ui:latest"
+check_image_exists "admier/brinxai_nodes-worker:latest"
 
 # Create a Docker Compose file
 cat <<EOF > docker-compose.yml
 version: '3'
 services:
   text-ui:
-    image: admier/text-ui:latest
+    image: admier/brinxai_nodes-text-ui:latest
     networks:
       - brinxai-network
     ports:
@@ -21,7 +30,7 @@ services:
       - ./:/usr/src/app
 
   worker:
-    image: admier/worker:latest
+    image: admier/brinxai_nodes-worker:latest
     networks:
       - brinxai-network
     ports:
@@ -31,7 +40,7 @@ services:
       - rembg
 
   rembg:
-    image: admier/rembg:latest
+    image: admier/brinxai_nodes-rembg:latest
     networks:
       - brinxai-network
     expose:
@@ -53,4 +62,3 @@ else
     echo "Neither docker-compose nor docker compose is available. Please install Docker Compose."
     exit 1
 fi
-
