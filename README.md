@@ -51,76 +51,82 @@ For optimal performance and to maximize earnings, we recommend the following sys
 
 ## Installation on Linux
 
-### Step 1: Install Docker
-To install Docker on your Linux system, please follow the instructions provided in the [official Docker documentation](https://docs.docker.com/engine/install/ubuntu).
+Installation on Linux
+Step 1: Install Docker
+To install Docker on your Linux system, please follow the instructions provided in the official Docker documentation by visiting Docker Engine Installation.
+Step 2: Download & Run the Worker Node
+Run the following commands in your terminal:
+# Download the install script
+curl -O https://raw.githubusercontent.com/admier1/BrinxAI-Worker-Nodes/master/install.sh
 
-### Step 2: Download & Run the Worker Node
-Run the following commands in your Terminal:
-```bash
-# Pull the latest image from Docker Hub
-docker pull admier/brinxai_nodes-worker:latest
+# Make the script executable
+chmod +x install.sh
 
-# Create docker-compose.yml file if it does not exist
-echo "version: '3.8'
-
-services:
-  worker:
-    image: admier/brinxai_nodes-worker:latest
-    ports:
-      - \"5011:5011\"
-    environment:
-      - SOME_ENV_VAR=some_value
-" > docker-compose.yml
-
-# Run docker-compose to start the service
-docker compose up -d
-```
-
-### Step 3: Register Your Worker Node
-1. Go to [workers.brinxai.com](https://workers.brinxai.com).
-2. Create an account using your email and password.
-3. Log in to your account.
-4. Find your IP address by visiting [whatismyipaddress.com](https://whatismyipaddress.com) or using the `ifconfig` command in the terminal.
-5. Enter your Node Name (any name) and IP address in the Worker Dashboard and click "Add Node".
-
-## Installation on Windows
-
-### Step 1: Install Docker
-To install Docker on your Windows system, please follow the instructions provided in the [official Docker documentation](https://docs.docker.com/desktop/install/windows-install/).
-
-### Step 2: Download & Run the Worker Node
+# Run the installation script
+./install.sh
+Step 3: Register Your Worker Node
+Go to workers.brinxai.com.
+Create an account using your email and password.
+Log in to your account.
+Find your IP address by visiting What Is My IP Address or using the ifconfig command in the terminal.
+Enter your Node Name (Any) and IP address in the Worker Dashboard and click "Add Node".
+Installation on Windows
+Step 1: Install Docker
+To install Docker on your Windows system, please follow the instructions provided in the official Docker documentation by visiting Docker Desktop Installation.
+Step 2: Download & Run the Worker Node
 Run the following commands in your Command Prompt or Powershell:
-```bash
-# Pull the latest image from Docker Hub
-docker pull admier/brinxai_nodes-worker:latest
+# Download the install script
+curl -O https://raw.githubusercontent.com/admier1/BrinxAI-Worker-Nodes/master/install.sh
 
-# Create docker-compose.yml file if it does not exist
-echo "version: '3.8'
+# Make the script executable
+chmod +x install.sh
 
-services:
-  worker:
-    image: admier/brinxai_nodes-worker:latest
-    ports:
-      - \"5011:5011\"
-    environment:
-      - SOME_ENV_VAR=some_value
-" > docker-compose.yml
-
-# Run docker-compose to start the service
-docker compose up -d
-```
-
-### Step 3: Register Your Worker Node
-1. Go to [workers.brinxai.com](https://workers.brinxai.com).
-2. Create an account using your email and password.
-3. Log in to your account.
-4. Find your IP address by visiting [whatismyipaddress.com](https://whatismyipaddress.com) or using the `ipconfig` command in the terminal.
-5. Enter your Node Name (any name) and IP address in the Worker Dashboard and click "Add Node".
-
-## Important Notes
+# Run the installation script
+./install.sh
+Step 3: Register Your Worker Node
+Go to workers.brinxai.com.
+Create an account using your email and password.
+Log in to your account.
+Find your IP address by visiting What Is My IP Address or using the ipconfig command in the terminal.
+Enter your Node Name (Any) and IP address in the Worker Dashboard and click "Add Node".
+Important Notes
 Ensure port 5011 is open on your system for the Worker Node to function correctly.
-
 Follow the above steps carefully for a successful installation and setup of your Worker Node on both Linux and Windows platforms.
+
+
+
+
+
+
+Worker Nodes (Update Node)
+Introduction
+This guide will help you update your BrinxAI Worker Nodes from an older version to the latest version.
+Update Instructions
+Step 1: Stop and Remove Existing Containers
+Before updating, you need to stop and remove your existing Docker containers. Run the following commands in your terminal or Command Prompt:
+# Stop the existing containers
+docker stop brinxai_nodes-worker-1
+​
+# Remove the existing containers
+docker rm brinxai_nodes-worker-1
+Step 2: Run the Installation Script
+Download and run the installation script to set up the updated services:
+# Download the install script
+curl -O https://raw.githubusercontent.com/admier1/BrinxAI-Worker-Nodes/master/install.sh
+​
+# Make the script executable
+chmod +x install.sh
+​
+# Run the installation script
+./install.sh
+Step 3: Verify the Update
+Ensure that all services are running correctly by using the following command:
+docker ps
+Go to  and verify that your Worker Node is listed and active.
+Important Notes
+Make sure to backup any important data before performing the update.
+Ensure that port 5011 is open on your system for the Worker Node to function correctly.
+By following these updated instructions, you can successfully install or update your BrinxAI Worker Nodes on both Linux and Windows platforms.
 
 
 Stay Connected
