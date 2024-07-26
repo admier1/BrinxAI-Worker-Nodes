@@ -1,64 +1,113 @@
 #!/bin/bash
 
-# Function to check if Docker image exists on Docker Hub
-check_image_exists() {
-    local image_name="$1"
-    if ! docker pull "$image_name" &> /dev/null; then
-        echo "Error: Docker image $image_name does not exist on Docker Hub."
-        exit 1
-    fi
-}
+# Exit immediately if a command exits with a non-zero status
+set -e
 
-# Check and pull the latest images from Docker Hub
-check_image_exists "admier/brinxai_nodes-rembg:latest"
-check_image_exists "admier/brinxai_nodes-text-ui:latest"
-check_image_exists "admier/brinxai_nodes-worker:latest"
+# Update package list and install dependencies
+echo "Updating package list and installing dependencies..."
+sudo apt-get update
+sudo apt-get install -y curl gnupg lsb-release wget
 
-# Create a Docker Compose file
-cat <<EOF > docker-compose.yml
-version: '3'
+# Check if GPU is available
+echo "Checking GPU availability..."
+GPU_AVAILABLE=false
+if command -v nvidia-smi &> /dev/null
+then
+    echo "GPU detected. NVIDIA driver is installed."
+    GPU_AVAILABLE=true
+else
+    echo "No GPU detected or NVIDIA driver not installed."
+fi
+
+# Pull the worker image from Docker Hub
+echo "Pulling Docker image admier/brinxai_nodes-worker..."
+docker pull admier/brinxai_nodes-worker
+
+# Create docker-compose.yml file
+echo "Creating docker-compose.yml..."
+if [ "$GPU_AVAILABLE" = true ]; then
+    cat <<EOF > docker-compose.yml
+version: '3.8'
+
 services:
-  text-ui:
-    image: admier/brinxai_nodes-text-ui:latest
-    networks:
-      - brinxai-network
-    ports:
-      - "127.0.0.1:7860:7860"
-    expose:
-      - "5000"
-    volumes:
-      - ./:/usr/src/app
-
   worker:
-    image: admier/brinxai_nodes-worker:latest
-    networks:
-      - brinxai-network
+    image: admier/brinxai_nodes-worker
+    environment:
+      - WORKER_PORT=\${WORKER_PORT:-5011}
+      - DASHBOARD_PORT=\${DASHBOARD_PORT:-3030}
     ports:
-      - "5011:5011"
-    depends_on:
-      - text-ui
-      - rembg
-
-  rembg:
-    image: admier/brinxai_nodes-rembg:latest
+      - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
+      - "\${DASHBOARD_PORT:-3030}:\${DASHBOARD_PORT:-3030}"
+    volumes:
+      - ./generated_images:/usr/src/app/generated_images
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - brinxai-network
-    expose:
-      - "7000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: nvidia
 
 networks:
   brinxai-network:
     driver: bridge
+    name: brinxai-network  # Explicitly set the network name
+EOF
+else
+    cat <<EOF > docker-compose.yml
+version: '3.8'
+
+services:
+  worker:
+    image: admier/brinxai_nodes-worker
+    environment:
+      - WORKER_PORT=\${WORKER_PORT:-5011}
+      - DASHBOARD_PORT=\${DASHBOARD_PORT:-3030}
+    ports:
+      - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
+      - "\${DASHBOARD_PORT:-3030}:\${DASHBOARD_PORT:-3030}"
+    volumes:
+      - ./generated_images:/usr/src/app/generated_images
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - brinxai-network
+
+networks:
+  brinxai-network:
+    driver: bridge
+    name: brinxai-network  # Explicitly set the network name
+EOF
+fi
+
+# Start Docker containers using docker compose
+echo "Starting Docker containers..."
+docker compose up -d
+
+# Create systemd service
+echo "Creating systemd service for Docker Compose application..."
+cat <<EOF | sudo tee /etc/systemd/system/docker-compose-app.service
+[Unit]
+Description=Docker Compose Application Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+WorkingDirectory=$(pwd)
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-# Check if docker-compose or docker compose is available and start the services
-if command -v docker-compose &> /dev/null
-then
-    docker-compose up -d
-elif command -v docker &> /dev/null && docker compose version &> /dev/null
-then
-    docker compose up -d
-else
-    echo "Neither docker-compose nor docker compose is available. Please install Docker Compose."
-    exit 1
-fi
+# Reload systemd and enable the service
+echo "Enabling and starting the systemd service..."
+sudo systemctl daemon-reload
+sudo systemctl enable docker-compose-app.service
+sudo systemctl start docker-compose-app.service
+
+echo "Installation and setup completed successfully."
