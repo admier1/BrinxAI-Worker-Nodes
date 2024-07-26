@@ -19,6 +19,16 @@ else
     echo "No GPU detected or NVIDIA driver not installed."
 fi
 
+# Prompt user for WORKER_PORT
+read -p "Enter the port number for WORKER_PORT (default is 5011): " USER_PORT
+USER_PORT=${USER_PORT:-5011}
+
+# Create .env file with user-defined WORKER_PORT
+echo "Creating .env file..."
+cat <<EOF > .env
+WORKER_PORT=$USER_PORT
+EOF
+
 # Pull the worker image from Docker Hub
 echo "Pulling Docker image admier/brinxai_nodes-worker..."
 docker pull admier/brinxai_nodes-worker
