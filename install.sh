@@ -95,29 +95,4 @@ fi
 echo "Starting Docker containers..."
 docker compose up -d
 
-# Create systemd service
-echo "Creating systemd service for Docker Compose application..."
-cat <<EOF | sudo tee /etc/systemd/system/docker-compose-app.service
-[Unit]
-Description=Docker Compose Application Service
-Requires=docker.service
-After=docker.service
-
-[Service]
-Restart=always
-WorkingDirectory=$(pwd)
-ExecStart=/usr/bin/docker compose up -d
-ExecStop=/usr/bin/docker compose down
-TimeoutStartSec=0
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Reload systemd and enable the service
-echo "Enabling and starting the systemd service..."
-sudo systemctl daemon-reload
-sudo systemctl enable docker-compose-app.service
-sudo systemctl start docker-compose-app.service
-
 echo "Installation and setup completed successfully."
