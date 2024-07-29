@@ -16,6 +16,10 @@ containers=(
   "ai_text-ui_1"
 )
 
+# Stop Docker service
+echo "Stopping Docker service..."
+sudo systemctl stop docker.service
+
 # Stop the existing containers
 for container in "${containers[@]}"; do
   docker stop $container 2>/dev/null && echo "Stopped $container"
@@ -25,3 +29,19 @@ done
 for container in "${containers[@]}"; do
   docker rm $container 2>/dev/null && echo "Removed $container"
 done
+
+# Remove Docker images
+docker rmi admier/brinxai_nodes-worker 2>/dev/null && echo "Removed Docker image admier/brinxai_nodes-worker"
+
+# Remove Docker volumes
+docker volume prune -f
+
+# Remove Docker networks
+docker network prune -f
+
+# Remove generated files and directories
+rm -rf ./generated_images
+rm -rf .env
+rm -rf docker-compose.yml
+
+echo "Uninstallation and cleanup completed successfully."
