@@ -29,10 +29,6 @@ cat <<EOF > .env
 WORKER_PORT=$USER_PORT
 EOF
 
-# Pull the worker image from Docker Hub
-echo "Pulling Docker image admier/brinxai_nodes-worker..."
-docker pull admier/brinxai_nodes-worker
-
 # Create docker-compose.yml file
 echo "Creating docker-compose.yml..."
 if [ "$GPU_AVAILABLE" = true ]; then
@@ -41,13 +37,11 @@ version: '3.8'
 
 services:
   worker:
-    image: admier/brinxai_nodes-worker
+    image: admier/brinxai_nodes-worker:latest
     environment:
       - WORKER_PORT=\${WORKER_PORT:-5011}
-      - DASHBOARD_PORT=\${DASHBOARD_PORT:-3030}
     ports:
       - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
-      - "\${DASHBOARD_PORT:-3030}:\${DASHBOARD_PORT:-3030}"
     volumes:
       - ./generated_images:/usr/src/app/generated_images
       - /var/run/docker.sock:/var/run/docker.sock
@@ -71,13 +65,11 @@ version: '3.8'
 
 services:
   worker:
-    image: admier/brinxai_nodes-worker
+    image: admier/brinxai_nodes-worker:latest
     environment:
       - WORKER_PORT=\${WORKER_PORT:-5011}
-      - DASHBOARD_PORT=\${DASHBOARD_PORT:-3030}
     ports:
       - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
-      - "\${DASHBOARD_PORT:-3030}:\${DASHBOARD_PORT:-3030}"
     volumes:
       - ./generated_images:/usr/src/app/generated_images
       - /var/run/docker.sock:/var/run/docker.sock
@@ -93,6 +85,6 @@ fi
 
 # Start Docker containers using docker compose
 echo "Starting Docker containers..."
-docker compose up -d
+docker-compose up -d
 
 echo "Installation and setup completed successfully."
