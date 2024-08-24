@@ -40,57 +40,42 @@ WORKER_PORT=$USER_PORT
 
 # Create docker-compose.yml file
 Write-Host "Creating docker-compose.yml..."
-if ($GPU_AVAILABLE) {
-    @"
+$dockerComposeContent = @"
 version: '3.8'
 
 services:
   worker:
     image: admier/brinxai_nodes-worker:latest
     environment:
-      - WORKER_PORT=`${WORKER_PORT:-5011}
+      - WORKER_PORT=$USER_PORT
     ports:
-      - `${WORKER_PORT:-5011}:${WORKER_PORT:-5011}
+      - "$USER_PORT:$USER_PORT"
     volumes:
       - ./generated_images:/usr/src/app/generated_images
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - brinxai-network
+"@
+
+if ($GPU_AVAILABLE) {
+    $dockerComposeContent += @"
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: [gpu]
     runtime: nvidia
-
-networks:
-  brinxai-network:
-    driver: bridge
-    name: brinxai-network
-"@ | Out-File -FilePath docker-compose.yml -Encoding ascii
-} else {
-    @"
-version: '3.8'
-
-services:
-  worker:
-    image: admier/brinxai_nodes-worker:latest
-    environment:
-      - WORKER_PORT=`${WORKER_PORT:-5011}
-    ports:
-      - `${WORKER_PORT:-5011}:${WORKER_PORT:-5011}
-    volumes:
-      - ./generated_images:/usr/src/app/generated_images
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - brinxai-network
-
-networks:
-  brinxai-network:
-    driver: bridge
-    name: brinxai-network
-"@ | Out-File -FilePath docker-compose.yml -Encoding ascii
+"@
 }
+
+$dockerComposeContent += @"
+networks:
+  brinxai-network:
+    driver: bridge
+    name: brinxai-network
+"@
+
+$dockerComposeContent | Out-File -FilePath docker-compose.yml -Encoding ascii
 
 # Start Docker containers using docker compose
 Write-Host "Starting Docker containers..."
