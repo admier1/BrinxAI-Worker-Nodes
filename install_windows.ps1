@@ -79,6 +79,6 @@ $dockerComposeContent | Out-File -FilePath docker-compose.yml -Encoding ascii
 
 # Start Docker containers using docker compose
 Write-Host "Starting Docker containers..."
-docker-compose up -d
+docker compose up -d
 
 Write-Host "Installation and setup completed successfully."
