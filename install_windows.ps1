@@ -47,9 +47,9 @@ services:
   worker:
     image: admier/brinxai_nodes-worker:latest
     environment:
-      - WORKER_PORT=$USER_PORT
+      - WORKER_PORT=${USER_PORT}
     ports:
-      - "$USER_PORT:$USER_PORT"
+      - "${USER_PORT}:${USER_PORT}"
     volumes:
       - ./generated_images:/usr/src/app/generated_images
       - /var/run/docker.sock:/var/run/docker.sock
