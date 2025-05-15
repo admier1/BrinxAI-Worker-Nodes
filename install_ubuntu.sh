@@ -21,8 +21,7 @@ sudo apt-get install -y curl gnupg lsb-release wget
 # Check if GPU is available
 echo "Checking GPU availability..."
 GPU_AVAILABLE=false
-if command -v nvidia-smi &> /dev/null
-then
+if command -v nvidia-smi &> /dev/null; then
     echo "GPU detected. NVIDIA driver is installed."
     GPU_AVAILABLE=true
 else
@@ -55,10 +54,8 @@ EOF
 echo "Creating docker-compose.yml..."
 if [ "$GPU_AVAILABLE" = true ]; then
     cat <<EOF > docker-compose.yml
-version: '3.8'
-
 services:
-  worker:
+  brinxai_worker:
     image: admier/brinxai_nodes-worker:latest
     environment:
       - WORKER_PORT=\${WORKER_PORT:-5011}
@@ -80,14 +77,12 @@ services:
 networks:
   brinxai-network:
     driver: bridge
-    name: brinxai-network  # Explicitly set the network name
+    name: brinxai-network
 EOF
 else
     cat <<EOF > docker-compose.yml
-version: '3.8'
-
 services:
-  worker:
+  brinxai_worker:
     image: admier/brinxai_nodes-worker:latest
     environment:
       - WORKER_PORT=\${WORKER_PORT:-5011}
@@ -103,12 +98,24 @@ services:
 networks:
   brinxai-network:
     driver: bridge
-    name: brinxai-network  # Explicitly set the network name
+    name: brinxai-network
 EOF
 fi
+
+# Pull the latest Docker image
+echo "Pulling the latest image from Docker Hub..."
+docker pull admier/brinxai_nodes-worker:latest
 
 # Start Docker containers using docker compose
 echo "Starting Docker containers..."
 docker compose up -d
+
+# Check container status
+echo "Checking container status..."
+docker ps -a --filter "name=brinxai_worker"
+
+# Display container logs for debugging
+echo "Displaying container logs..."
+docker logs $(docker ps -a -q --filter "name=brinxai_worker") || echo "No logs available."
 
 echo "Installation and setup completed successfully."
