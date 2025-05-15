@@ -49,6 +49,7 @@ cat <<EOF > .env
 WORKER_PORT=$USER_PORT
 NODE_UUID=$NODE_UUID
 USE_GPU=$GPU_AVAILABLE
+CUDA_VISIBLE_DEVICES=""
 EOF
 
 # Create docker-compose.yml file
@@ -62,6 +63,7 @@ services:
       - WORKER_PORT=\${WORKER_PORT:-5011}
       - NODE_UUID=\${NODE_UUID}
       - USE_GPU=\${USE_GPU:-true}
+      - CUDA_VISIBLE_DEVICES=\${CUDA_VISIBLE_DEVICES}
     ports:
       - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
     volumes:
@@ -90,6 +92,7 @@ services:
       - WORKER_PORT=\${WORKER_PORT:-5011}
       - NODE_UUID=\${NODE_UUID}
       - USE_GPU=\${USE_GPU:-false}
+      - CUDA_VISIBLE_DEVICES=\${CUDA_VISIBLE_DEVICES}
     ports:
       - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
     volumes:
@@ -117,8 +120,9 @@ docker pull admier/brinxai_nodes-worker:latest
 echo "Starting Docker containers..."
 docker compose up -d
 
-# Check container status
+# Check container status with delay
 echo "Checking container status..."
+sleep 5 # Wait for container to stabilize
 docker ps -a --filter "name=brinxai_worker"
 
 # Display container logs for debugging
@@ -130,11 +134,14 @@ else
     echo "No container found with name matching 'brinxai_worker'."
 fi
 
-# Check if container is running
+# Verify if container is still running
+echo "Verifying container status after delay..."
 if docker ps --filter "name=brinxai_worker" --format '{{.ID}}' | grep -q .; then
     echo "Container is running successfully."
 else
     echo "Container failed to stay running. Please check the logs above for errors."
+    echo "Running 'docker ps -a' for more details:"
+    docker ps -a --filter "name=brinxai_worker"
 fi
 
 echo "Installation and setup completed successfully."
