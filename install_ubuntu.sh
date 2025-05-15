@@ -48,6 +48,7 @@ echo "Creating .env file..."
 cat <<EOF > .env
 WORKER_PORT=$USER_PORT
 NODE_UUID=$NODE_UUID
+USE_GPU=$GPU_AVAILABLE
 EOF
 
 # Create docker-compose.yml file
@@ -60,6 +61,7 @@ services:
     environment:
       - WORKER_PORT=\${WORKER_PORT:-5011}
       - NODE_UUID=\${NODE_UUID}
+      - USE_GPU=\${USE_GPU:-true}
     ports:
       - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
     volumes:
@@ -87,6 +89,7 @@ services:
     environment:
       - WORKER_PORT=\${WORKER_PORT:-5011}
       - NODE_UUID=\${NODE_UUID}
+      - USE_GPU=\${USE_GPU:-false}
     ports:
       - "\${WORKER_PORT:-5011}:\${WORKER_PORT:-5011}"
     volumes:
@@ -102,6 +105,10 @@ networks:
 EOF
 fi
 
+# Clean up orphan containers
+echo "Cleaning up orphan containers..."
+docker compose down --remove-orphans
+
 # Pull the latest Docker image
 echo "Pulling the latest image from Docker Hub..."
 docker pull admier/brinxai_nodes-worker:latest
@@ -116,6 +123,18 @@ docker ps -a --filter "name=brinxai_worker"
 
 # Display container logs for debugging
 echo "Displaying container logs..."
-docker logs $(docker ps -a -q --filter "name=brinxai_worker") || echo "No logs available."
+CONTAINER_ID=$(docker ps -a -q --filter "name=brinxai_worker")
+if [ -n "$CONTAINER_ID" ]; then
+    docker logs "$CONTAINER_ID" || echo "No logs available."
+else
+    echo "No container found with name matching 'brinxai_worker'."
+fi
+
+# Check if container is running
+if docker ps --filter "name=brinxai_worker" --format '{{.ID}}' | grep -q .; then
+    echo "Container is running successfully."
+else
+    echo "Container failed to stay running. Please check the logs above for errors."
+fi
 
 echo "Installation and setup completed successfully."
