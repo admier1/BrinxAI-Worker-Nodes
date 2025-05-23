@@ -82,6 +82,8 @@ services:
             - capabilities: [gpu]
     runtime: nvidia
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
   brinxai-network:
@@ -107,6 +109,8 @@ services:
     networks:
       - brinxai-network
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
   brinxai-network:
@@ -126,6 +130,18 @@ docker pull $IMAGE_NAME
 # Start Docker containers using docker compose
 echo "🚀 Starting Docker containers..."
 docker compose up -d
+
+# Deploy Watchtower to monitor and update the container
+echo "📡 Deploying Watchtower to monitor and update the container..."
+docker rm -f watchtower || true
+docker run -d \
+  --name watchtower \
+  --restart always \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower \
+  --include-restarting \
+  --label-enable \
+  --schedule "0 0 4 * * *" # Run daily at 4 AM
 
 # Check container status with delay
 echo "🔍 Checking container status..."
@@ -151,4 +167,4 @@ else
     docker ps -a --filter "name=$CONTAINER_NAME"
 fi
 
-echo "🎉 Installation and setup completed successfully."
+echo "🎉 Installation and setup completed successfully. Watchtower will auto-update the container daily when a new version of '$IMAGE_NAME' is available!"
